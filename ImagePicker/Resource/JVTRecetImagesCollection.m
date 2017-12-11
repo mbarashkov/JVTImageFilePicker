@@ -64,6 +64,7 @@ static int cameraIndex = 0;
 
 - (void)checkForCameraAccesbiliyAnsAskIfNeeded {
     @weakify(self);
+    _cameraAccesible = false;/*
     [JVTCameraAccesebility getCameraAccessibilityAndRequestIfNeeded:^(BOOL allowedToUseCamera) {
         @strongify(self);
         self.cameraAccesible = allowedToUseCamera;
@@ -71,7 +72,7 @@ static int cameraIndex = 0;
             [self cameraStateAccessible];
             [self.collectionView reloadData];
         }
-    }];
+    }];*/
 }
 
 - (void)cameraStateAccessible {

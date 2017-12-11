@@ -50,16 +50,20 @@ static NSInteger maxResults = 15;
             options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
                 NSLog(@"%f", progress); //follow progress + update progress bar
             };
+            __block int nilImageCount = 0;
             
             __block PHImageRequestID reqId = [[PHImageManager defaultManager] requestImageForAsset:asset
                                                                                         targetSize:size
                                                                                        contentMode:PHImageContentModeAspectFill
                                                                                            options:options
                                                                                      resultHandler:^(UIImage *image, NSDictionary *info) {
+                                                                                         if(image != nil)
+                                                                                         {
+                                                                                             [allImages addObject:image];
+                                                                                             nilImageCount++;
+                                                                                         }
                                                                                          
-                                                                                         [allImages addObject:image];
-                                                                                         
-                                                                                         if (allImages.count == allPhotosResult.count || allImages.count >= maxResults) {
+                                                                                         if (allImages.count + nilImageCount == allPhotosResult.count || allImages.count >= maxResults) {
                                                                                              *stop = YES;
                                                                                              [[PHImageManager defaultManager] cancelImageRequest:reqId];
                                                                                              dispatch_async(dispatch_get_main_queue(), ^{
