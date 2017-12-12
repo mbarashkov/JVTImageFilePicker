@@ -7,8 +7,7 @@ s.homepage          = 'https://github.com/mcmatan/ImageFilesPicker'
 s.ios.deployment_target = '8.0'
 s.platform = :ios, '8.0'
 s.license           = {
-:type => 'MIT',
-:file => 'LICENSE'
+:type => 'MIT'
 }
 s.author            = {
 'YOURNAME' => 'Matan'
