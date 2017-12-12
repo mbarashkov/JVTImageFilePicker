@@ -12,7 +12,6 @@
 		ED3D52BF1CD5265C00FD4A77 /* UIBlockButton.m in Sources */ = {isa = PBXBuildFile; fileRef = ED3D52B81CD5265C00FD4A77 /* UIBlockButton.m */; };
 		ED3D52C01CD5265C00FD4A77 /* UIImage+FixOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = ED3D52BA1CD5265C00FD4A77 /* UIImage+FixOrientation.m */; };
 		ED3D52C11CD5265C00FD4A77 /* UIImagePickerController+Block.m in Sources */ = {isa = PBXBuildFile; fileRef = ED3D52BC1CD5265C00FD4A77 /* UIImagePickerController+Block.m */; };
-		ED3D52C31CD5267700FD4A77 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ED3D52C21CD5267700FD4A77 /* background.jpg */; };
 		ED403BA81D858C6900A16668 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ED403BA31D858C6900A16668 /* AppDelegate.m */; };
 		ED403BA91D858C6900A16668 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ED403BA41D858C6900A16668 /* Info.plist */; };
 		ED403BAA1D858C6900A16668 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ED403BA51D858C6900A16668 /* main.m */; };
@@ -71,7 +70,6 @@
 		ED3D52BA1CD5265C00FD4A77 /* UIImage+FixOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FixOrientation.m"; sourceTree = "<group>"; };
 		ED3D52BB1CD5265C00FD4A77 /* UIImagePickerController+Block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImagePickerController+Block.h"; sourceTree = "<group>"; };
 		ED3D52BC1CD5265C00FD4A77 /* UIImagePickerController+Block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImagePickerController+Block.m"; sourceTree = "<group>"; };
-		ED3D52C21CD5267700FD4A77 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
 		ED403BA21D858C6900A16668 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Application/AppDelegate.h; sourceTree = "<group>"; };
 		ED403BA31D858C6900A16668 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Application/AppDelegate.m; sourceTree = "<group>"; };
 		ED403BA41D858C6900A16668 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Application/Info.plist; sourceTree = "<group>"; };
@@ -205,14 +203,6 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
-		ED3D52B01CD525E200FD4A77 /* Resource */ = {
-			isa = PBXGroup;
-			children = (
-				ED3D52C21CD5267700FD4A77 /* background.jpg */,
-			);
-			path = Resource;
-			sourceTree = "<group>";
-		};
 		ED3D52B11CD5261800FD4A77 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
@@ -235,7 +225,6 @@
 			isa = PBXGroup;
 			children = (
 				ED3D52B11CD5261800FD4A77 /* Vendor */,
-				ED3D52B01CD525E200FD4A77 /* Resource */,
 				ED7A8E441CB3B09800A39614 /* ImagePicker */,
 				ED7A8E5E1CB3B09800A39614 /* ImagePickerTests */,
 				ED7A8E691CB3B09800A39614 /* ImagePickerUITests */,
@@ -474,7 +463,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED7A8E551CB3B09800A39614 /* LaunchScreen.storyboard in Resources */,
-				ED3D52C31CD5267700FD4A77 /* background.jpg in Resources */,
 				ED7A8E521CB3B09800A39614 /* Assets.xcassets in Resources */,
 				ED403BA91D858C6900A16668 /* Info.plist in Resources */,
 				ED7A8E501CB3B09800A39614 /* Main.storyboard in Resources */,
