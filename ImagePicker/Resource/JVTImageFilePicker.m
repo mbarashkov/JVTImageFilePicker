@@ -35,6 +35,7 @@
     self = [super init];
     if (self) {
         self.isFilePickerEnabled = YES;
+        self.isCameraEnabled = YES;
         self.backgroundDimmedView = [[UIView alloc] init];
         self.backgroundDimmedView.backgroundColor = [UIColor blackColor];
         self.imageResizeSize = DEFAULT_IMAGE_SIZE;
@@ -81,7 +82,7 @@
                                                                            }];
         [self.actionSheet addAction:photoLibrary];
     }
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+    if (self.isCameraEnabled && [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         JVTActionSheetAction *takePhotoOrVideo = [JVTActionSheetAction actionWithTitle:takePhotoOrVideoTxt
                                                                             actionType:kActionType_default
                                                                                handler:^(JVTActionSheetAction *action) {

@@ -11,7 +11,7 @@
 @import AssetsLibrary;
 #import "JVTCameraAccesebility.h"
 
-static NSInteger maxResults = 15;
+static NSInteger maxResults = 30;
 
 @implementation JVTRecentImagesProvider
 
@@ -22,11 +22,11 @@ static NSInteger maxResults = 15;
                 callback(nil);
             });
         }
-        PHFetchResult *smartAlbums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
+        /*PHFetchResult *smartAlbums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
         
         [smartAlbums enumerateObjectsUsingBlock:^(PHAssetCollection *collection, NSUInteger idx, BOOL *stop){
             
-        }];
+        }];*/
         
         PHFetchOptions *fetchOptions = [PHFetchOptions new];
         fetchOptions.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO] ];
@@ -40,19 +40,42 @@ static NSInteger maxResults = 15;
         }
         
         __block NSMutableArray *allImages = [NSMutableArray array];
+        __block NSDate* current = [NSDate date];
         
         //   Get assets from the PHFetchResult object
         [allPhotosResult enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL *stop) {
-            PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
-            options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat; //I only want the highest possible quality
-            options.synchronous = YES;
-            options.networkAccessAllowed = YES;
-            options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
+            /*options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
                 NSLog(@"%f", progress); //follow progress + update progress bar
-            };
+            };*/
             __block int nilImageCount = 0;
             
-            __block PHImageRequestID reqId = [[PHImageManager defaultManager] requestImageForAsset:asset
+            PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
+            options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat; //I only want the highest possible quality
+            //options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat; //I only want the highest possible quality
+            options.synchronous = true;
+            options.networkAccessAllowed = false;
+            
+            __block PHImageRequestID reqId = [[PHImageManager defaultManager] requestImageDataForAsset:asset options:options resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+                NSLog(@"image loaded");
+                UIImage* image = [UIImage imageWithData:imageData];
+                if(image != nil)
+                {
+                    [allImages addObject:image];
+                    nilImageCount++;
+                }
+                
+                if (allImages.count + nilImageCount == allPhotosResult.count || allImages.count >= maxResults) {
+                    *stop = YES;
+                    [[PHImageManager defaultManager] cancelImageRequest:reqId];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        NSTimeInterval elapsed = [current timeIntervalSinceNow];
+                        callback(allImages);
+                    });
+                }
+            }];
+            
+            
+            /*__block PHImageRequestID reqId = [[PHImageManager defaultManager] requestImageForAsset:asset
                                                                                         targetSize:size
                                                                                        contentMode:PHImageContentModeAspectFill
                                                                                            options:options
@@ -67,10 +90,11 @@ static NSInteger maxResults = 15;
                                                                                              *stop = YES;
                                                                                              [[PHImageManager defaultManager] cancelImageRequest:reqId];
                                                                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                                 NSTimeInterval elapsed = [current timeIntervalSinceNow];
                                                                                                  callback(allImages);
                                                                                              });
                                                                                          }
-                                                                                     }];
+                                                                                     }];*/
         }];
     }];
 }
