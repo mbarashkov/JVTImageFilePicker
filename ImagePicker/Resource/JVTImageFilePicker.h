@@ -20,6 +20,10 @@
 - (void)didDismissFilesPicker;
 @end
 
+/*@interface NonRotatingUIImagePickerController : UIImagePickerController
+
+@end*/
+
 @interface JVTImageFilePicker : NSObject <UIDocumentPickerDelegate, UIDocumentMenuDelegate, JVTImagePreviewVCDelegate>
 @property (nonatomic,assign) CGSize imageResizeSize;
 @property (assign) bool isFilePickerEnabled; // Default is YES.

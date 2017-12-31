@@ -21,6 +21,19 @@
 
 #define DEFAULT_IMAGE_SIZE CGSizeMake(600, 600)
 
+/*@implementation NonRotatingUIImagePickerController
+// Disable Landscape mode.
+- (BOOL)shouldAutorotate
+{
+    return NO;
+}
+
+- (NSUInteger)supportedInterfaceOrientations{
+    return UIInterfaceOrientationLandscapeLeft;
+}
+
+@end*/
+
 @interface JVTImageFilePicker () <JVTRecetImagesCollectionDelegate, JVTActionSheetActionDelegate>
 @property (nonatomic, strong) JVTActionSheetView *actionSheet;
 @property (nonatomic, strong) UIViewController *presentedFromController;
@@ -132,12 +145,13 @@
     __weak JVTImageFilePicker *weakSelf = self;
     self.imagePickerController = [[UIImagePickerController alloc] init];
     self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    [self.imagePickerController setModalPresentationStyle: UIModalPresentationOverCurrentContext];
     [self.presentedFromController presentViewController:self.imagePickerController animated:YES completion:nil];
     
     self.imagePickerController.finalizationBlock = ^(UIImagePickerController *picker, NSDictionary *info) {
         UIImage *image = (UIImage *)[info valueForKey:UIImagePickerControllerOriginalImage];
-        
-        [weakSelf showPreviewForImage:image];
+        [self didPressSendOnImage:image];
+        //[weakSelf showPreviewForImage:image];
     };
     self.imagePickerController.cancellationBlock = ^(UIImagePickerController *picker) {
         [picker dismissViewControllerAnimated:YES
@@ -152,6 +166,8 @@
         __weak JVTImageFilePicker *weakSelf = self;
         self.imagePickerController = [[UIImagePickerController alloc] init];
         self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+        [self.imagePickerController setModalPresentationStyle: UIModalPresentationOverCurrentContext];
+        
         self.imagePickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
         self.imagePickerController.allowsEditing = NO;
         [self.presentedFromController presentViewController:self.imagePickerController animated:YES completion:nil];
