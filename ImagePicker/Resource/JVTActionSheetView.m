@@ -133,6 +133,10 @@ static CGFloat itemHeight = 50;
                          if (self.delegate) {
                              [self.delegate actionSheetDidDismiss];
                          }
+                         
+                         [self.actions removeAllObjects];
+                         self.sheetView = nil;
+                         self.presentingOnView = nil;
                      }];
 }
 

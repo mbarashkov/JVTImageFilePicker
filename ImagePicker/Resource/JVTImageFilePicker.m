@@ -18,6 +18,8 @@
 #import "JVTActionSheetView.h"
 #import "EXTScope.h"
 #import "JVTCameraAccesebility.h"
+#import <MessageUI/MessageUI.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
 #define DEFAULT_IMAGE_SIZE CGSizeMake(600, 600)
 
@@ -36,7 +38,7 @@
 
 @interface JVTImageFilePicker () <JVTRecetImagesCollectionDelegate, JVTActionSheetActionDelegate>
 @property (nonatomic, strong) JVTActionSheetView *actionSheet;
-@property (nonatomic, strong) UIViewController *presentedFromController;
+@property (nonatomic, weak) UIViewController *presentedFromController;
 @property (nonatomic, strong) UIImagePickerController *imagePickerController;
 @property (nonatomic, strong) JVTRecetImagesCollection *recetImagesCollection;
 @property (nonatomic, strong) UIView *backgroundDimmedView;
@@ -56,19 +58,35 @@
     return self;
 }
 
+/*-(void)alertMessage:(NSString*)message
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Debug"
+                                                    message:message
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}*/
+
 - (void)presentFilesPickerOnController:(UIViewController *)presentFromController
   withAddingCustomActionsToActionSheet:(NSArray *)customAlertActions {
+    //[self alertMessage:@"0"];
     if (self.actionSheet && [self.actionSheet isPresented]) {
+        //[self alertMessage:@"1"];
         NSLog(@"Trying to present ImagePicker when already presented");
         return;
     }
     
     self.presentedFromController = presentFromController;
-    [self.presentedFromController.view endEditing:YES];
-    
+    //[self.presentedFromController.view endEditing:YES];
+
+    //[self alertMessage:@"2"];
+
     [self addBackgroundDimmed];
     [self showBackgroundDimmed];
     
+    //[self alertMessage:@"3"];
+
     NSString *photoLibraryTxt = @"Photo Library";
     NSString *takePhotoOrVideoTxt = @"Take Photo";
     NSString *uploadFileTxt = @"Upload File";
@@ -76,11 +94,13 @@
     self.actionSheet = [[JVTActionSheetView alloc] init];
     self.actionSheet.delegate = self;
     
-    JVTActionSheetAction *uploadFile = [JVTActionSheetAction actionWithTitle:uploadFileTxt
+    //[self alertMessage:@"4"];
+
+    /*JVTActionSheetAction *uploadFile = [JVTActionSheetAction actionWithTitle:uploadFileTxt
                                                                   actionType:kActionType_default
                                                                      handler:^(JVTActionSheetAction *action) {
                                                                          [self uploadFilePress];
-                                                                     }];
+                                                                     }];*/
     
     JVTActionSheetAction *cancel = [JVTActionSheetAction actionWithTitle:cancelTxt
                                                               actionType:kActionType_cancel
@@ -95,18 +115,20 @@
                                                                            }];
         [self.actionSheet addAction:photoLibrary];
     }
-    if (self.isCameraEnabled && [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+    /*if (self.isCameraEnabled && [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         JVTActionSheetAction *takePhotoOrVideo = [JVTActionSheetAction actionWithTitle:takePhotoOrVideoTxt
                                                                             actionType:kActionType_default
                                                                                handler:^(JVTActionSheetAction *action) {
                                                                                    [self takePhotoOrVideoPress];
                                                                                }];
         [self.actionSheet addAction:takePhotoOrVideo];
-    }
+    }*/
     
-    if (self.isFilePickerEnabled) {
+    //[self alertMessage:@"5"];
+
+    /*if (self.isFilePickerEnabled) {
         [self.actionSheet addAction:uploadFile];
-    }
+    }*/
     [self.actionSheet addAction:cancel];
     
     if (customAlertActions) {
@@ -115,23 +137,47 @@
         }
     }
     
+    //[self alertMessage:@"6"];
+    
     [self addCollectionImagesPreviewToSheetAndPresent:self.actionSheet];
+    
+    //[self alertMessage:@"7"];
 }
 
 - (void)addCollectionImagesPreviewToSheetAndPresent:(JVTActionSheetView *)alertController {
+    //[self alertMessage:@"a0"];
     __weak JVTImageFilePicker *weakSelf = self;
-    [JVTRecentImagesProvider getRecentImagesWithSize:self.imageResizeSize return:^(NSArray<UIImage *> *images) {
-        
+    [JVTRecentImagesProvider getRecentImagesWithSize:self.imageResizeSize return:^(NSArray<UIImage *> *images, NSString* report) {
+        //[self alertMessage:@"a1"];
+
         if (images.count > 0) {
+            //[self alertMessage:@"a2"];
             CGFloat width = self.presentedFromController.view.bounds.size.width;
             CGRect frame = CGRectMake(0, 0, width, 163.0F);
+            //[self alertMessage:@"a3"];
             weakSelf.recetImagesCollection = [[JVTRecetImagesCollection alloc] initWithFrame:frame withImagesToDisplay:images];
             weakSelf.recetImagesCollection.delegate = self;
             weakSelf.recetImagesCollection.presentingViewController = self.presentedFromController;
+            //[self alertMessage:@"a4"];
             [alertController addHeaderView:weakSelf.recetImagesCollection];
+            //[self alertMessage:@"a5"];
+            
+            // From within your active view controller
+            /*if([MFMailComposeViewController canSendMail]) {
+                MFMailComposeViewController *mailCont = [[MFMailComposeViewController alloc] init];
+                mailCont.mailComposeDelegate = self;
+                
+                [mailCont setSubject:@"debug timings"];
+                [mailCont setToRecipients:[NSArray arrayWithObject:@"mbarashkov@gmail.com"]];
+                [mailCont setMessageBody:report isHTML:NO];
+                
+                [self.presentedFromController presentModalViewController:mailCont animated:YES];
+            }*/
         }
-        
+        //[self alertMessage:@"a6"];
+
         [weakSelf.actionSheet presentOnTopOfView:weakSelf.presentedFromController.view];
+        //[self alertMessage:@"a7"];
     }];
 }
 
@@ -268,10 +314,11 @@
 #pragma mark - delegate updates
 
 - (void)dismissPresentedControllerAndInformDelegate:(UIViewController *)presentedController {
+    [self updateDelegateOnDissmiss];
     [presentedController dismissViewControllerAnimated:YES
-                                            completion:^(void) {
-                                                [self updateDelegateOnDissmiss];
-                                            }];
+                                            completion:nil];//^(void) {
+    //                                            [self updateDelegateOnDissmiss];
+                                            //}];
 }
 
 - (void)updateDelegateOnDissmiss {
@@ -286,6 +333,11 @@
     [self hideBackgroundDimmed];
     [self.recetImagesCollection removeFromSuperview];
     self.recetImagesCollection = nil;
+    self.presentedFromController = nil;
+    self.recetImagesCollection = nil;
+    self.actionSheet.delegate = nil;
+    self.actionSheet = nil;
+    
     NSLog(@"JVTImageFilesPicker dismissed");
 }
 
@@ -393,6 +445,7 @@
                      }
                      completion:^(BOOL finished) {
                          [weakSelf.backgroundDimmedView removeFromSuperview];
+                         weakSelf.backgroundDimmedView = nil;
                      }];
 }
 @end
