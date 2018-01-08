@@ -17,16 +17,16 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
-        [self.imageView setContentMode:UIViewContentModeScaleAspectFill];
+        [self.imageView setContentMode:UIViewContentModeScaleAspectFit];
         self.imageView.clipsToBounds = YES;
         [self addSubview:self.imageView];
     }
     return self;
 }
 
-- (UIImage *)imageWithImage:(UIImage *)image scaledToFillSize:(CGSize)size
+- (UIImage *)imageWithImage:(UIImage *)image scaledToFitSize:(CGSize)size
 {
-    CGFloat scale = MAX(size.width/image.size.width, size.height/image.size.height);
+    CGFloat scale = MIN(size.width/image.size.width, size.height/image.size.height);
     CGFloat width = image.size.width * scale;
     CGFloat height = image.size.height * scale;
     CGRect imageRect = CGRectMake((size.width - width)/2.0f,
@@ -42,7 +42,7 @@
 }
 
 - (void)setImage:(UIImage *)image {
-    [self.imageView setImage:[self imageWithImage:image scaledToFillSize:self.imageView.bounds.size]];
+    [self.imageView setImage:[self imageWithImage:image scaledToFitSize:self.imageView.bounds.size]];
 }
 
 - (void)prepareForReuse {
@@ -54,3 +54,4 @@
     return NSStringFromClass([self class]);
 }
 @end
+

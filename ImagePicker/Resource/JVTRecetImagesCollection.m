@@ -235,10 +235,7 @@ static int cameraIndex = 0;
 #pragma mark - size calculations
 
 - (CGSize)cellSizeForImage:(UIImage *)image {
-    if ([self isImagePortrait:image]) {
-        return CGSizeMake(itemWidthPortrait, itemHeight);
-    }
-    return CGSizeMake(itemWidthLandscap, itemHeight);
+    return CGSizeMake(itemHeight * image.size.width/image.size.height, itemHeight);
 }
 
 - (BOOL)isImagePortrait:(UIImage *)image {
