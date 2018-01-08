@@ -94,7 +94,7 @@ static int cameraIndex = 0;
 
 - (void)setupCollection {
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-    flowLayout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    flowLayout.sectionInset = UIEdgeInsetsMake(0, 10, 0, 10);
     flowLayout.minimumLineSpacing = cellPadding;
     flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)) collectionViewLayout:flowLayout];
