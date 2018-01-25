@@ -330,6 +330,7 @@
 #pragma mark - Action sheet delegate
 
 - (void)actionSheetDidDismiss {
+    [self updateDelegateOnDissmiss];
     [self hideBackgroundDimmed];
     [self.recetImagesCollection removeFromSuperview];
     self.recetImagesCollection = nil;
