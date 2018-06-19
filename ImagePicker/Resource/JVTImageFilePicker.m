@@ -190,7 +190,7 @@
 - (void)photoLibraryPress {
     __weak JVTImageFilePicker *weakSelf = self;
     self.imagePickerController = [[UIImagePickerController alloc] init];
-    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     [self.imagePickerController setModalPresentationStyle: UIModalPresentationOverCurrentContext];
     [self.presentedFromController presentViewController:self.imagePickerController animated:YES completion:nil];
     
