@@ -6,7 +6,7 @@
 //  Copyright © 2016 Matan Cohen. All rights reserved.
 //
 
-#import "JVTRecetImagesCollection.h"
+#import "JVTRecentImagesCollection.h"
 #import "JVTRecentImagesCollectionViewCell.h"
 #import "JVTTransitionOpenImageFullScreenDelegate.h"
 #import "JVTImagePreviewVC.h"
@@ -24,9 +24,9 @@ static NSString *CellPortraitIdentifier = @"CELL_PROTRAIT";
 static NSString *CellLandscpeIdentifier = @"CELL_LANDSCAPE";
 @import GLKit;
 static int cameraIndex = 0;
-@interface JVTRecetImagesCollection () <UICollectionViewDelegate, UICollectionViewDataSource, JVTImagePreviewVCDelegate, JVTTransitionOpenImageFullScreenDismissCalles, AVCaptureVideoDataOutputSampleBufferDelegate, JVTTransitionOpenViewFullScreenDelegateDismissCalles, JVTCameraViewPreviewVCDelegate>
+@interface JVTRecentImagesCollection () <UICollectionViewDelegate, UICollectionViewDataSource, JVTImagePreviewVCDelegate, JVTTransitionOpenImageFullScreenDismissCalles, AVCaptureVideoDataOutputSampleBufferDelegate, JVTTransitionOpenViewFullScreenDelegateDismissCalles, JVTCameraViewPreviewVCDelegate>
 @property (nonatomic, strong) UICollectionView *collectionView;
-@property (nonatomic, strong) NSArray<UIImage *> *imagesModel;
+@property (nonatomic, strong) NSArray<NSURL *> *imagesModel;
 
 @property (nonatomic, strong) JVTTransitionOpenImageFullScreenDelegate *transitionImageOpenDelegate;
 @property (nonatomic, strong) JVTTransitionOpenViewFullScreenDelegate *transitionViewOpenDelegate;
@@ -41,7 +41,7 @@ static int cameraIndex = 0;
 
 @end
 
-@implementation JVTRecetImagesCollection {
+@implementation JVTRecentImagesCollection {
     CGFloat itemHeight;
     CGFloat itemWidthLandscap;
     CGFloat itemWidthPortrait;
@@ -49,7 +49,7 @@ static int cameraIndex = 0;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
-          withImagesToDisplay:(NSArray<UIImage *> *)imagesToDisplay {
+          withImagesToDisplay:(NSArray<NSData *> *)imagesToDisplay {
     self = [super initWithFrame:frame];
     if (self) {
         self.cameraAccesible = NO;
@@ -243,11 +243,9 @@ static int cameraIndex = 0;
 }
 
 - (UIImage *)imageForImagePath:(NSIndexPath *)indexPath {
-    if (self.cameraAccesible) {
-        return self.imagesModel[indexPath.item - 1];
-    } else {
-        return self.imagesModel[indexPath.item];
-    }
+    /*NSURL* dataUrl = self.imagesModel[_cameraAccesible ? indexPath.item - 1 : indexPath.item];
+    return [UIImage imageWithContentsOfFile:dataUrl.path];*/
+    return [UIImage imageWithData:self.imagesModel[_cameraAccesible ? indexPath.item - 1 : indexPath.item]];
 }
 
 #pragma mark - JVTOpenFullScreenTransitioinCameraVCDelegate

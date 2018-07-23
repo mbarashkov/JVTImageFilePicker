@@ -14,9 +14,9 @@
 
 @end
 
-@interface JVTRecetImagesCollection : UIView
+@interface JVTRecentImagesCollection : UIView
 - (instancetype)initWithFrame:(CGRect)frame
-          withImagesToDisplay:(NSArray<UIImage *> *)imagesToDisplay;
+          withImagesToDisplay:(NSArray<NSData *> *)imagesToDisplay;
 @property (nonatomic, weak) id<JVTRecetImagesCollectionDelegate> delegate;
 @property (nonatomic, weak) UIViewController *presentingViewController;
 @end

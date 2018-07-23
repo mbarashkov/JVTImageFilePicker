@@ -11,7 +11,7 @@
 #import "JVTWorker.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "JVTRecentImagesProvider.h"
-#import "JVTRecetImagesCollection.h"
+#import "JVTRecentImagesCollection.h"
 #import "EXTScope.h"
 #import <AVFoundation/AVFoundation.h>
 #import "JVTActionSheetAction.h"
@@ -40,7 +40,7 @@
 @property (nonatomic, strong) JVTActionSheetView *actionSheet;
 @property (nonatomic, weak) UIViewController *presentedFromController;
 @property (nonatomic, strong) UIImagePickerController *imagePickerController;
-@property (nonatomic, strong) JVTRecetImagesCollection *recetImagesCollection;
+@property (nonatomic, strong) JVTRecentImagesCollection *recentImagesCollection;
 @property (nonatomic, strong) UIView *backgroundDimmedView;
 @end
 
@@ -145,39 +145,18 @@
 }
 
 - (void)addCollectionImagesPreviewToSheetAndPresent:(JVTActionSheetView *)alertController {
-    //[self alertMessage:@"a0"];
     __weak JVTImageFilePicker *weakSelf = self;
-    [JVTRecentImagesProvider getRecentImagesWithSize:self.imageResizeSize return:^(NSArray<UIImage *> *images, NSString* report) {
-        //[self alertMessage:@"a1"];
+    [JVTRecentImagesProvider getRecentImagesWithSize:weakSelf.imageResizeSize return:^(NSArray<NSURL *> *images, NSString* report) {
 
         if (images.count > 0) {
-            //[self alertMessage:@"a2"];
-            CGFloat width = self.presentedFromController.view.bounds.size.width;
+            CGFloat width = weakSelf.presentedFromController.view.bounds.size.width;
             CGRect frame = CGRectMake(0, 0, width, 163.0F);
-            //[self alertMessage:@"a3"];
-            weakSelf.recetImagesCollection = [[JVTRecetImagesCollection alloc] initWithFrame:frame withImagesToDisplay:images];
-            weakSelf.recetImagesCollection.delegate = self;
-            weakSelf.recetImagesCollection.presentingViewController = self.presentedFromController;
-            //[self alertMessage:@"a4"];
-            [alertController addHeaderView:weakSelf.recetImagesCollection];
-            //[self alertMessage:@"a5"];
-            
-            // From within your active view controller
-            /*if([MFMailComposeViewController canSendMail]) {
-                MFMailComposeViewController *mailCont = [[MFMailComposeViewController alloc] init];
-                mailCont.mailComposeDelegate = self;
-                
-                [mailCont setSubject:@"debug timings"];
-                [mailCont setToRecipients:[NSArray arrayWithObject:@"mbarashkov@gmail.com"]];
-                [mailCont setMessageBody:report isHTML:NO];
-                
-                [self.presentedFromController presentModalViewController:mailCont animated:YES];
-            }*/
+            weakSelf.recentImagesCollection = [[JVTRecentImagesCollection alloc] initWithFrame:frame withImagesToDisplay:images];
+            weakSelf.recentImagesCollection.delegate = weakSelf;
+            weakSelf.recentImagesCollection.presentingViewController = weakSelf.presentedFromController;
+            [alertController addHeaderView:weakSelf.recentImagesCollection];
         }
-        //[self alertMessage:@"a6"];
-
         [weakSelf.actionSheet presentOnTopOfView:weakSelf.presentedFromController.view];
-        //[self alertMessage:@"a7"];
     }];
 }
 
@@ -332,10 +311,10 @@
 - (void)actionSheetDidDismiss {
     [self updateDelegateOnDissmiss];
     [self hideBackgroundDimmed];
-    [self.recetImagesCollection removeFromSuperview];
-    self.recetImagesCollection = nil;
+    [self.recentImagesCollection removeFromSuperview];
+    self.recentImagesCollection = nil;
     self.presentedFromController = nil;
-    self.recetImagesCollection = nil;
+    self.recentImagesCollection = nil;
     self.actionSheet.delegate = nil;
     self.actionSheet = nil;
     

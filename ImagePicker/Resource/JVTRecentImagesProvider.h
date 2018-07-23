@@ -9,5 +9,5 @@
 #import <Foundation/Foundation.h>
 @import UIKit;
 @interface JVTRecentImagesProvider : NSObject
-+ (void)getRecentImagesWithSize:(CGSize) size return:(void (^)(NSArray<UIImage *> *images, NSString* report))callback;
++ (void)getRecentImagesWithSize:(CGSize) size return:(void (^)(NSArray<NSData *> *images, NSString* report))callback;
 @end

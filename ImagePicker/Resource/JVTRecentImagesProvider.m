@@ -12,22 +12,25 @@
 #import "JVTCameraAccesebility.h"
 
 static NSInteger maxResults = 30;
-
+static NSString* photoCacheFolder = @"personalPhotosCache";
 @implementation JVTRecentImagesProvider
 
-+ (void)getRecentImagesWithSize:(CGSize) size return:(void (^)(NSArray<UIImage *> *images, NSString* report))callback {
++ (BOOL) clearCache
+{
+    NSURL *cacheURL = [NSFileManager.defaultManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask][0];
+    cacheURL = [cacheURL URLByAppendingPathComponent:photoCacheFolder isDirectory:true];
+    
+    return [NSFileManager.defaultManager removeItemAtURL:cacheURL error: nil];
+}
+
++ (void)getRecentImagesWithSize:(CGSize) size return:(void (^)(NSArray<NSData *> *images, NSString* report))callback {
     [JVTCameraAccesebility getPhotoRollAccessibilityAndRequestIfNeeded:^(BOOL allowedToUseCamera) {
         if (!allowedToUseCamera) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 callback(nil, @"");
             });
         }
-        /*PHFetchResult *smartAlbums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
-        
-        [smartAlbums enumerateObjectsUsingBlock:^(PHAssetCollection *collection, NSUInteger idx, BOOL *stop){
-            
-        }];*/
-        
+        //[self clearCache];
         PHFetchOptions *fetchOptions = [PHFetchOptions new];
         fetchOptions.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO] ];
         PHFetchResult *allPhotosResult = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:fetchOptions];
@@ -39,34 +42,30 @@ static NSInteger maxResults = 30;
             return;
         }
         
-        __block NSMutableArray *allImages = [NSMutableArray array];
+        __block NSMutableArray<NSURL*> *allImages = [NSMutableArray<NSURL*> array];
         __block NSDate* current = [NSDate date];
         __block NSString* report = [NSString new];
-        //report = [report stringByAppendingString:[NSString stringWithFormat:@"total count: %i\n", allPhotosResult.count]];
+        //__block int imageIndex = 0;
+        NSURL *documentsURL = [NSFileManager.defaultManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask][0];
+        documentsURL = [documentsURL URLByAppendingPathComponent:photoCacheFolder isDirectory:true];
+        [NSFileManager.defaultManager createDirectoryAtPath:documentsURL.path withIntermediateDirectories:true attributes:nil error:nil];
         
-        //   Get assets from the PHFetchResult object
         [allPhotosResult enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger idx, BOOL *stop) {
             __block int nilImageCount = 0;
-            //report = [report stringByAppendingString:[NSString stringWithFormat:@"enumerateObjectsUsingBlock: %f\n", -[current timeIntervalSinceNow]]];
             PHImageRequestOptions *options = [PHImageRequestOptions new];
             options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat; //I only want the highest possible quality
             options.synchronous = true;
             options.networkAccessAllowed = false;
-            
             @autoreleasepool {
                 __block PHImageRequestID reqId = [[PHImageManager defaultManager] requestImageDataForAsset:asset options:options resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
-                NSLog(@"image loaded");
-                //report = [report stringByAppendingString:[NSString stringWithFormat:@"requestImageDataForAsset: %i %f\n", idx + 1, -[current timeIntervalSinceNow]]];
-                              
-                UIImage* image;
-                
                 if(imageData != nil) {
-                    image = [UIImage imageWithData:imageData];
-                    if(image != nil) {
-                        [allImages addObject:image];
-                    }
+                    /*NSString* fileName = [NSString stringWithFormat:@"%i", imageIndex];
+                    NSURL* imageURL = [documentsURL URLByAppendingPathComponent:fileName isDirectory:false];
+                    [imageData writeToURL:imageURL atomically:true];*/
+                    [allImages addObject:imageData];
+                    //imageIndex ++;
                 }
-                if (image == nil) {
+                else {
                     nilImageCount++;
                 }
                 
@@ -74,34 +73,11 @@ static NSInteger maxResults = 30;
                     *stop = YES;
                     [[PHImageManager defaultManager] cancelImageRequest:reqId];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        //NSTimeInterval elapsed = [current timeIntervalSinceNow];
                         callback(allImages, report);
                     });
                 }
                 }];
             }
-            
-            
-            /*__block PHImageRequestID reqId = [[PHImageManager defaultManager] requestImageForAsset:asset
-                                                                                        targetSize:size
-                                                                                       contentMode:PHImageContentModeAspectFill
-                                                                                           options:options
-                                                                                     resultHandler:^(UIImage *image, NSDictionary *info) {
-                                                                                         if(image != nil)
-                                                                                         {
-                                                                                             [allImages addObject:image];
-                                                                                             nilImageCount++;
-                                                                                         }
-                                                                                         
-                                                                                         if (allImages.count + nilImageCount == allPhotosResult.count || allImages.count >= maxResults) {
-                                                                                             *stop = YES;
-                                                                                             [[PHImageManager defaultManager] cancelImageRequest:reqId];
-                                                                                             dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                                 NSTimeInterval elapsed = [current timeIntervalSinceNow];
-                                                                                                 callback(allImages);
-                                                                                             });
-                                                                                         }
-                                                                                     }];*/
         }];
     }];
 }
